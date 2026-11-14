@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+# Node / CDK
+node_modules/
+cdk.out/
+# AWS / secrets
+.env
+.env.*
+!.env.example
+*.pem
+.aws/
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
