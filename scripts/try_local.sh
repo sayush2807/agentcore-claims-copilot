@@ -22,7 +22,7 @@ done
 
 ask() {
   echo; echo "=== Q: $1 ===" | tee -a "$LOG"
-  agentcore invoke --local --payload "{\"prompt\": \"$1\"}" 2>&1 | tee -a "$LOG"
+  agentcore invoke --runtime agent --local --payload "{\"prompt\": \"$1\"}" 2>&1 | tee -a "$LOG"
   echo
 }
 
