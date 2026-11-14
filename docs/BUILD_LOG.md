@@ -194,3 +194,5 @@ Runtime bills only active CPU and memory per second; Gateway is priced per thous
 - Invoking the deployed agent returns `Error 002: Access to Bedrock models is not allowed for this account`. Direct calls to Claude Sonnet 4.6, Claude Haiku 4.5, Nova Pro and Nova Lite with console credentials return the same error. Credits: 160 USD remaining, 0 used. This is an account-level restriction that needs an AWS Support case. See INTERVIEW_NOTES 1.9.
 
 **Still unverified:** that the runtime's own role can invoke the model (cannot be tested while the account is blocked).
+
+**Support case:** opened 2026-11-14 12:59 ET, category "Account Activation: Bedrock Allowlisting". Basic Support states a response within 24 hours. Until it is resolved, work continues on components that can be verified without model inference (Gateway policy, evaluation harness, CI).
