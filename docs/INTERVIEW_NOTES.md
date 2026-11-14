@@ -76,7 +76,7 @@ Everything here happened on this project. Each entry is written so it can be tol
 |---|---|---|
 | Rules, not the model, decide coverage and money (ADR 0001) | Reproducible, auditable, unit-testable; regulators and customers can be shown exactly why a figure was produced | The agent cannot handle rule types nobody coded. Intended: those go to a human |
 | The agent recommends; a human approves | Claims decisions carry legal and financial weight | Slower than straight-through processing; no full automation story |
-| Approval threshold enforced outside the agent as well as in the prompt | A prompt is guidance, not a control. A hard limit must hold even if the model is manipulated | Two places to keep in sync |
+| Approval limit enforced by Cedar policy at the Gateway, default deny (ADR 0004). Verified live: 10,001 is denied, 10,000 is allowed | A prompt is guidance, not a control. A hard limit must hold even if the model is manipulated or a different client calls the Gateway | Every new tool needs an explicit permit before it works; supervisors cannot approve large payouts until user identity is integrated, so the system fails closed |
 | One `adjudicate_claim` tool instead of separate coverage, payout and fraud tools | Fewer chances for the model to combine partial results incorrectly | Less flexible; the model cannot run a single check in isolation |
 | Claude Sonnet 4.6 as the default model | Most capable model the account can call, with reliable tool use | Higher cost per call than Haiku 4.5 or Nova. To be measured in evaluation rather than assumed |
 | Synthetic data only | No privacy, licensing or confidentiality risk; fully reproducible | Not representative of real claims (see section 3) |

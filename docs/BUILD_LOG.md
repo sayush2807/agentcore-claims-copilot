@@ -196,3 +196,21 @@ Runtime bills only active CPU and memory per second; Gateway is priced per thous
 **Still unverified:** that the runtime's own role can invoke the model (cannot be tested while the account is blocked).
 
 **Support case:** opened 2026-11-14 12:59 ET, category "Account Activation: Bedrock Allowlisting". Basic Support states a response within 24 hours. Until it is resolved, work continues on components that can be verified without model inference (Gateway policy, evaluation harness, CI).
+
+## 2026-11-14: Policy enforced at the Gateway
+
+**Confirmed first:** the Bedrock block is account-wide. A Nova Lite call from the laptop returns the same Error 002 as CloudShell and the runtime.
+
+**Done** (see ADR 0004)
+
+- Added an `approve_payout` tool to the mock claims system. It is exposed on the Gateway for the adjuster application and is not given to the agent.
+- Declared a policy engine, `ClaimsGuardrails`, attached to the Gateway in ENFORCE mode.
+- Two Cedar policies in `policies/`, created by the CDK stack with the Gateway ARN substituted at deploy time and validated against the Gateway's tool schema.
+- `scripts/verify_policy.py`: calls the deployed Gateway directly and checks six cases.
+- Tests: 39 passing.
+
+**Verified in AWS:** deployed from CloudShell on the first attempt. 6 of 6 policy checks passed: lookups allowed; approvals of 750 and exactly 10,000 allowed; 10,001 and 83,500 denied with `Tool Execution Denied: Tool call not allowed due to policy enforcement [No policy applies to the request (denied by default)]`.
+
+**Observation:** `tools/list` still shows `approve_payout` to a caller whose large approvals would be denied. Policy here governs invocation, not discovery.
+
+**Not done:** a supervisor path. It needs the Gateway to authenticate end users so a policy can test their role.
