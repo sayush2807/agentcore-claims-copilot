@@ -172,3 +172,5 @@ Runtime bills only active CPU and memory per second; Gateway is priced per thous
 **Also fixed:** the stack is named `AgentCore-ClaimsCopilot-default` (the CLI appends the target name); `scripts/teardown.sh` updated.
 
 **Follow-up worth doing:** most of the 44 MB is dependencies. A container build, where the image is built in the cloud, would remove the large upload from the developer's machine entirely.
+
+**Working rule from here on:** every issue hit during the build is added to `INTERVIEW_NOTES.md` section 1 at the time it happens, with diagnosis, action, trade-off and why it matters.

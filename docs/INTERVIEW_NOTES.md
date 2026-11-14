@@ -42,6 +42,21 @@ Everything here happened on this project. Each entry is written so it can be tol
 - **What we did:** treated it as the reason to introduce AgentCore Gateway now rather than later: the legacy systems become Lambda functions behind a Gateway, and the agent reaches them as remote tools.
 - **Lesson:** "runs locally" hides coupling. Ask where each dependency physically lives after deployment before the first deploy.
 
+### 1.7 First deploy failed uploading a 44 MB package
+
+- **Situation:** the first `agentcore deploy` got through account verification, synthesis, CDK bootstrap and the Lambda upload, then failed on the agent package with `RequestTimeout: Your socket connection to the server was not read from or written to within the timeout period`, on all four parts, after seven retries each.
+- **Diagnosis:** read the log rather than re-running. The tool uploads large assets to S3 as four parallel 5 MB parts. S3 closes a connection that is idle for about 20 seconds, and on a slow or unstable uplink four streams starve each other. The failure was before CloudFormation started, so nothing had been created and nothing needed rolling back.
+- **What we did:** the deploy script now builds first, reads the asset manifest, and uploads each package as a single stream with no read timeout. Asset names are content hashes, so the deploy tool finds the object in place and skips its own upload. Before relying on that, we checked that two builds on the same machine produce the same hash.
+- **Trade-off:** this works around the tool instead of fixing the cause. The cause is package size: about 44 MB, nearly all dependencies. The better long-term fix is a container build, where the image is built in the cloud and the laptop uploads only source.
+- **Why it matters for delivery:** customer networks are often worse than this (VPNs, proxies, inspection appliances). Knowing where a deployment tool puts its artefacts, and how to stage them yourself, is what gets a deploy through on a restricted network.
+
+### 1.8 Deployment tool wanted the AWS account ID committed to a public repository
+
+- **Situation:** after the first deploy attempt, the CLI had written the account ID into `agentcore/aws-targets.json` and a deployed-state file, and its generated `.gitignore` explicitly keeps the state file tracked so a team can share it.
+- **What we did:** for a public repository, both files are untracked and ignored, and the local commit that briefly contained the ID was rewritten before it was pushed. The CLI recreates the target file on deploy.
+- **Trade-off:** a team sharing one deployment would want that state file committed, in a private repository. The tool's default is right for that case and wrong for this one.
+- **Lesson:** review what a generator adds to version control before the first push. Account IDs are not secrets, but they are useful to an attacker and there is no reason to publish them.
+
 ## 2. Decisions and their trade-offs
 
 | Decision | Why | What it costs |
