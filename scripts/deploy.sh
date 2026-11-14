@@ -46,13 +46,45 @@ for manifest in glob.glob("agentcore/cdk/cdk.out/*-default.assets.json"):
             bucket = dest["bucketName"].replace("${AWS::AccountId}", account).replace("${AWS::Region}", region)
             print(f"agentcore/cdk/cdk.out/{path}\t{bucket}\t{dest['objectKey']}")
 PY
+# Upload one file in 5 MB parts, one part at a time, retrying each part.
+# Slow, but a dropped connection only costs one part instead of the whole file.
+upload_in_parts() {
+  local file="$1" bucket="$2" key="$3" tmp upload_id n=0 total parts="" etag ok start
+  tmp="$(mktemp -d)"
+  split -b 5m "$file" "$tmp/part."
+  total="$(ls "$tmp" | wc -l | tr -d ' ')"
+  upload_id="$(aws s3api create-multipart-upload --bucket "$bucket" --key "$key" \
+                --content-type application/zip --query UploadId --output text 2>>"$LOG")" || return 1
+  for part in "$tmp"/part.*; do
+    n=$((n + 1)); ok=""
+    for attempt in 1 2 3 4 5 6 7 8; do
+      start="$(date +%s)"
+      if etag="$(aws s3api upload-part --bucket "$bucket" --key "$key" --part-number "$n" \
+                  --upload-id "$upload_id" --body "$part" --cli-read-timeout 0 --cli-connect-timeout 60 \
+                  --query ETag --output text 2>>"$LOG")"; then
+        say "  part $n of $total uploaded in $(( $(date +%s) - start ))s"
+        ok="yes"; break
+      fi
+      say "  part $n of $total failed (attempt $attempt after $(( $(date +%s) - start ))s); retrying..."
+      sleep 3
+    done
+    if [ -z "$ok" ]; then
+      aws s3api abort-multipart-upload --bucket "$bucket" --key "$key" --upload-id "$upload_id" >>"$LOG" 2>&1
+      rm -rf "$tmp"; return 1
+    fi
+    parts="$parts{\"ETag\":$etag,\"PartNumber\":$n},"
+  done
+  rm -rf "$tmp"
+  aws s3api complete-multipart-upload --bucket "$bucket" --key "$key" --upload-id "$upload_id" \
+    --multipart-upload "{\"Parts\":[${parts%,}]}" >>"$LOG" 2>&1
+}
+
 while IFS=$'\t' read -r file bucket key; do
   if aws s3api head-object --bucket "$bucket" --key "$key" >/dev/null 2>&1; then
     say "Already uploaded: $(basename "$file")"
   else
-    say "Uploading $(basename "$file") ($(du -h "$file" | cut -f1)) as a single stream; this can take several minutes..."
-    aws s3api put-object --bucket "$bucket" --key "$key" --body "$file" \
-      --cli-read-timeout 0 --cli-connect-timeout 60 >>"$LOG" 2>&1 || { say "Upload failed. See $LOG"; rm -f .asset_list; exit 1; }
+    say "Uploading $(basename "$file") ($(du -h "$file" | cut -f1 | tr -d ' ')) in 5 MB parts..."
+    upload_in_parts "$file" "$bucket" "$key" < /dev/null || { say "Upload failed. See $LOG"; rm -f .asset_list; exit 1; }
   fi
 done < .asset_list
 rm -f .asset_list
