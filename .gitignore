@@ -40,3 +40,4 @@ agentcore/.cache/
 # CDK
 agentcore/cdk/cdk.out/
 local_run.log
+model_probe.log
