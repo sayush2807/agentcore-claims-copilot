@@ -41,3 +41,29 @@ A chronological record of what was done, why, and what alternatives were conside
 
 - Resolve the IAM / CLI credential path on the free plan.
 - Verify current AgentCore CLI docs and scaffold the project.
+
+## 2026-11-14: Scaffold, synthetic data, mock legacy systems, adjudication rules
+
+**Done**
+
+- Scaffolded with AgentCore CLI 1.0.3 using the `agent-python-strands` template (Runtime plus a Memory resource with semantic and episodic strategies). See ADR 0002.
+- `data/generate.py`: seeded generator producing 24 policies and 22 claims, including eight hand-built scenarios (clean low value, high value, excluded peril, lapsed policy, fraud indicators, over limit, frequent claimant, below deductible).
+- `legacy_systems/`: mock policy administration and core claims services. These stand in for the customer's systems of record and will be deployed as Lambda functions behind AgentCore Gateway.
+- `app/agent/domain/adjudication.py`: deterministic coverage, payout, fraud-signal and approval-routing rules. See ADR 0001.
+- `app/agent/tools/claims_tools.py`: four agent tools; `app/agent/main.py` now uses them with a claims-specific system prompt.
+- `tests/`: 31 passing tests, one per scenario plus a sweep over every claim.
+
+**Decisions**
+
+- Scenario labels in the synthetic data are stripped by the claims service so the agent can never see the expected answer.
+- Supervisor approval is required above a 10,000 payout or at high fraud risk. The same rule will later be enforced outside the agent by AgentCore Policy, so the prompt is not the only control.
+
+**Not yet verified**
+
+- The agent itself has not been run against a model; that needs AWS credentials (`agentcore dev`).
+
+**Run the tests**
+
+```
+uv run --no-project --with pytest python -m pytest tests -q
+```

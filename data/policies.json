@@ -1,0 +1,698 @@
+[
+  {
+    "policy_id": "POL-1000",
+    "holder_id": "CUST-500",
+    "holder_name": "Pavel Farouk",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-05-22",
+    "expiry_date": "2027-05-22",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1001",
+    "holder_id": "CUST-501",
+    "holder_name": "Maya Holm",
+    "line": "auto",
+    "status": "lapsed",
+    "effective_date": "2025-10-02",
+    "expiry_date": "2026-10-02",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1002",
+    "holder_id": "CUST-502",
+    "holder_name": "Hana Okafor",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-07-24",
+    "expiry_date": "2027-07-24",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1003",
+    "holder_id": "CUST-503",
+    "holder_name": "Sofia Ricci",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2025-12-20",
+    "expiry_date": "2026-12-20",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1004",
+    "holder_id": "CUST-504",
+    "holder_name": "Kofi Holm",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-06-02",
+    "expiry_date": "2027-06-02",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1005",
+    "holder_id": "CUST-505",
+    "holder_name": "Leila Moreau",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2025-12-29",
+    "expiry_date": "2026-12-29",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1006",
+    "holder_id": "CUST-506",
+    "holder_name": "Sofia Farouk",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-06-16",
+    "expiry_date": "2027-06-16",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1007",
+    "holder_id": "CUST-507",
+    "holder_name": "Omar Petrov",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-01-05",
+    "expiry_date": "2027-01-05",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1008",
+    "holder_id": "CUST-508",
+    "holder_name": "Ravi Tanaka",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-01-31",
+    "expiry_date": "2027-01-31",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1009",
+    "holder_id": "CUST-509",
+    "holder_name": "Omar Castellanos",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-06-02",
+    "expiry_date": "2027-06-02",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1010",
+    "holder_id": "CUST-510",
+    "holder_name": "Omar Ishikawa",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2025-12-27",
+    "expiry_date": "2026-12-27",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1011",
+    "holder_id": "CUST-511",
+    "holder_name": "Tomas Haddad",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-02-10",
+    "expiry_date": "2027-02-10",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1012",
+    "holder_id": "CUST-512",
+    "holder_name": "Nora Tanaka",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-03-14",
+    "expiry_date": "2027-03-14",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1013",
+    "holder_id": "CUST-513",
+    "holder_name": "Jonas Tanaka",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-06-22",
+    "expiry_date": "2027-06-22",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1014",
+    "holder_id": "CUST-514",
+    "holder_name": "Ines Chaudhary",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-01-21",
+    "expiry_date": "2027-01-21",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1015",
+    "holder_id": "CUST-515",
+    "holder_name": "Bruno Tanaka",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-03-06",
+    "expiry_date": "2027-03-06",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1016",
+    "holder_id": "CUST-516",
+    "holder_name": "Bruno Petrov",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-03-26",
+    "expiry_date": "2027-03-26",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1017",
+    "holder_id": "CUST-517",
+    "holder_name": "Malik Tanaka",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-01-16",
+    "expiry_date": "2027-01-16",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1018",
+    "holder_id": "CUST-518",
+    "holder_name": "Luis Holm",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-01-13",
+    "expiry_date": "2027-01-13",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1019",
+    "holder_id": "CUST-519",
+    "holder_name": "Ines Petrov",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-02-10",
+    "expiry_date": "2027-02-10",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  },
+  {
+    "policy_id": "POL-1020",
+    "holder_id": "CUST-520",
+    "holder_name": "Bruno Farouk",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-06-10",
+    "expiry_date": "2027-06-10",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1021",
+    "holder_id": "CUST-521",
+    "holder_name": "Maya Ricci",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-06-14",
+    "expiry_date": "2027-06-14",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1022",
+    "holder_id": "CUST-522",
+    "holder_name": "Ravi Chaudhary",
+    "line": "home",
+    "status": "active",
+    "effective_date": "2026-06-17",
+    "expiry_date": "2027-06-17",
+    "coverages": {
+      "fire": {
+        "limit": 250000,
+        "deductible": 2500
+      },
+      "water_damage": {
+        "limit": 50000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 20000,
+        "deductible": 500
+      },
+      "wind": {
+        "limit": 75000,
+        "deductible": 2000
+      }
+    },
+    "exclusions": [
+      "flood",
+      "earthquake"
+    ]
+  },
+  {
+    "policy_id": "POL-1023",
+    "holder_id": "CUST-523",
+    "holder_name": "Nora Petrov",
+    "line": "auto",
+    "status": "active",
+    "effective_date": "2026-01-09",
+    "expiry_date": "2027-01-09",
+    "coverages": {
+      "collision": {
+        "limit": 40000,
+        "deductible": 1000
+      },
+      "theft": {
+        "limit": 30000,
+        "deductible": 500
+      },
+      "glass": {
+        "limit": 1500,
+        "deductible": 100
+      }
+    },
+    "exclusions": [
+      "flood",
+      "racing"
+    ]
+  }
+]
