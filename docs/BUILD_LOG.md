@@ -174,3 +174,23 @@ Runtime bills only active CPU and memory per second; Gateway is priced per thous
 **Follow-up worth doing:** most of the 44 MB is dependencies. A container build, where the image is built in the cloud, would remove the large upload from the developer's machine entirely.
 
 **Working rule from here on:** every issue hit during the build is added to `INTERVIEW_NOTES.md` section 1 at the time it happens, with diagnosis, action, trade-off and why it matters.
+
+## 2026-11-14: Deployed to AWS from CloudShell; Bedrock blocked at account level
+
+**Deploy**
+
+- Uploads from the laptop failed three ways (parallel parts, single stream, sequential 5 MB parts; the last failing after about 183 seconds per attempt). Deployed instead from AWS CloudShell with `scripts/deploy_cloudshell.sh`.
+- First CloudShell run failed because `uv` was not installed (`pip install --user` did not put it on the path); switched to the standalone installer.
+- Second run: 37 tests passed and the stack `AgentCore-ClaimsCopilot-default` deployed in under three minutes. Runtime, Memory, Gateway and Gateway target all report `deployed`.
+
+**Verified in AWS**
+
+- Gateway `tools/list` returns `legacy-api___get_claim`, `legacy-api___get_policy`, `legacy-api___list_claims_for_policy`.
+- `get_claim("CLM-9001")` returns the record from Lambda; `list_claims_for_policy("POL-1007")` returns 4 records.
+- This confirms the three items listed earlier as unverified for the Gateway path.
+
+**Blocked**
+
+- Invoking the deployed agent returns `Error 002: Access to Bedrock models is not allowed for this account`. Direct calls to Claude Sonnet 4.6, Claude Haiku 4.5, Nova Pro and Nova Lite with console credentials return the same error. Credits: 160 USD remaining, 0 used. This is an account-level restriction that needs an AWS Support case. See INTERVIEW_NOTES 1.9.
+
+**Still unverified:** that the runtime's own role can invoke the model (cannot be tested while the account is blocked).
