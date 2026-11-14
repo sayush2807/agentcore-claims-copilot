@@ -7,17 +7,22 @@ REGION="us-east-2"
 need() { command -v "$1" >/dev/null 2>&1; }
 
 echo "== Checking tools =="
-if ! need aws; then
-  if need brew; then
-    echo "Installing AWS CLI with Homebrew..."
-    brew install awscli
-  else
-    echo "AWS CLI not found. Install it from:"
-    echo "  https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"
-    echo "then run this script again."
-    exit 1
-  fi
+# Use the official AWS CLI installer, which bundles its own Python. The Homebrew
+# build can fail on some macOS versions with a pyexpat "Symbol not found" error.
+install_official_awscli() {
+  echo "Installing the official AWS CLI (you will be asked for your Mac password)..."
+  tmp="$(mktemp -d)"
+  curl -fsSL "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "$tmp/AWSCLIV2.pkg"
+  sudo installer -pkg "$tmp/AWSCLIV2.pkg" -target /
+  rm -rf "$tmp"
+  hash -r
+}
+if need brew && brew list awscli >/dev/null 2>&1; then
+  echo "Removing the Homebrew AWS CLI in favour of the official installer..."
+  brew uninstall awscli
+  hash -r
 fi
+if ! need aws; then install_official_awscli; fi
 aws --version
 
 if ! need node; then echo "Node.js 20+ is required: https://nodejs.org"; exit 1; fi

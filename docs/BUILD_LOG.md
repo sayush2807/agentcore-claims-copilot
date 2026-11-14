@@ -80,3 +80,9 @@ uv run --no-project --with pytest python -m pytest tests -q
 **Open**
 
 - Confirm `aws login` works with this account's sign-in method, then run the agent locally with `agentcore dev`.
+
+## 2026-11-14: AWS CLI install issue
+
+**Problem:** the Homebrew AWS CLI failed on `aws login` with `Symbol not found: _XML_SetAllocTrackerActivationThreshold` in `pyexpat`. Homebrew's Python expects a newer libexpat than the one macOS ships.
+
+**Fix:** `scripts/setup_local.sh` now removes the Homebrew build and installs the official AWS CLI package, which bundles its own Python and does not depend on system libraries.
