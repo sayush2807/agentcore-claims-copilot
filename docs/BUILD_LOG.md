@@ -101,3 +101,11 @@ uv run --no-project --with pytest python -m pytest tests -q
 **Decision:** default to `global.anthropic.claude-sonnet-4-6`. It is the most capable model the account can call with reliable tool use. The model ID is read from `BEDROCK_MODEL_ID`, so Haiku 4.5 or Nova can be compared later in evaluations on cost and accuracy without code changes.
 
 **Lesson worth keeping:** verify model entitlement per account and region before designing around a model. Availability differs by account plan and by inference profile scope (global vs regional).
+
+## 2026-11-14: Anthropic use case form
+
+**Problem:** after switching to Claude Sonnet 4.6, invocation failed with `ResourceNotFoundException: Model use case details have not been submitted for this account`. Anthropic requires a one-time use case form per AWS account before its models can be invoked on Bedrock.
+
+**Done:** submitted the form from the Bedrock model catalog (Claude Sonnet 4.6 page), describing this as a personal portfolio project on synthetic data with no production use. AWS notes that access can take up to 15 minutes to apply.
+
+**Lesson worth keeping:** on a new account, first-time Anthropic access on Bedrock has three separate gates: the automatic Marketplace subscription, per-account model availability, and the use case form. Each fails with a different error.
