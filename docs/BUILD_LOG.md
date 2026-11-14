@@ -109,3 +109,19 @@ uv run --no-project --with pytest python -m pytest tests -q
 **Done:** submitted the form from the Bedrock model catalog (Claude Sonnet 4.6 page), describing this as a personal portfolio project on synthetic data with no production use. AWS notes that access can take up to 15 minutes to apply.
 
 **Lesson worth keeping:** on a new account, first-time Anthropic access on Bedrock has three separate gates: the automatic Marketplace subscription, per-account model availability, and the use case form. Each fails with a different error.
+
+## 2026-11-14: First successful end-to-end local run
+
+**Result:** with the use case form approved (about 15 minutes after submission), the agent ran locally against Claude Sonnet 4.6 and handled both test claims.
+
+- **CLM-9000 (clean, low value):** recommended pay, 750, adjuster approval. Matches the deterministic rules.
+- **CLM-9004 (fraud indicators):** recommended referral to special investigations, supervisor approval, three signals described neutrally. Matches the rules.
+
+In both runs the agent called `adjudicate_claim` first and then the three lookup tools, as instructed.
+
+**Defects observed in the model's wording (not in the rules)**
+
+1. It presented the fraud score as "75/100". The score has no fixed maximum; the "/100" was invented.
+2. On the referred claim it called 29,500 the "recommended payout ... on hold", while the tool returns a recommended payout of 0 for a referral.
+
+**Fix:** two explicit prompt rules added. These two cases become the first entries in the evaluation set, because they show the kind of error that deterministic tools alone do not prevent: the numbers are right, the framing drifts.

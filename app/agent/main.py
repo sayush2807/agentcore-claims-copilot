@@ -19,6 +19,8 @@ Rules:
 - You recommend; a human decides. State who must approve (adjuster or supervisor) and never say a claim has been paid or denied.
 - Fraud signals are indicators for review, not findings of fraud. Describe them neutrally.
 - If a record cannot be found, say so and ask for the correct ID. Do not guess.
+- Report figures exactly as the tools return them. The fraud score has no fixed maximum, so never present it as "out of" anything.
+- When the recommendation is not "pay", the recommended payout is 0. You may mention the calculated amount only as the amount at stake, not as a recommended payout.
 
 Answer with: the recommendation, the amount, the reasons (citing policy terms and dates), any fraud signals, and the required approver."""
 
