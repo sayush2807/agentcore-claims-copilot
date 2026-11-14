@@ -10,14 +10,17 @@ set -uo pipefail
 export AWS_REGION="us-east-2" AWS_DEFAULT_REGION="us-east-2"
 WORK="/tmp/claims-copilot"          # /tmp: CloudShell's home directory is limited to 1 GB
 export npm_config_cache="/tmp/npm-cache" npm_config_prefix="/tmp/npm-global" UV_CACHE_DIR="/tmp/uv-cache"
-export PATH="/tmp/npm-global/bin:$HOME/.local/bin:$PATH"
+export PATH="/tmp/uv-bin:/tmp/npm-global/bin:$HOME/.local/bin:$PATH"
 LOG="/tmp/deploy.log"
 mkdir -p "$WORK" && cd "$WORK"
 : > "$LOG"
 say() { echo "$@" | tee -a "$LOG"; }
 
 say "== Tools =="
-command -v uv >/dev/null 2>&1 || python3 -m pip install --user -q uv >>"$LOG" 2>&1
+if ! command -v uv >/dev/null 2>&1; then
+  curl -LsSf https://astral.sh/uv/install.sh 2>>"$LOG" | env UV_INSTALL_DIR=/tmp/uv-bin UV_NO_MODIFY_PATH=1 sh >>"$LOG" 2>&1
+fi
+command -v uv >/dev/null 2>&1 || { say "Could not install uv. See $LOG"; exit 1; }
 command -v agentcore >/dev/null 2>&1 || npm install -g @aws/agentcore >>"$LOG" 2>&1
 say "node $(node --version), $(uv --version), agentcore $(agentcore --version 2>/dev/null | tail -1)"
 
