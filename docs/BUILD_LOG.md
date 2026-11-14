@@ -86,3 +86,18 @@ uv run --no-project --with pytest python -m pytest tests -q
 **Problem:** the Homebrew AWS CLI failed on `aws login` with `Symbol not found: _XML_SetAllocTrackerActivationThreshold` in `pyexpat`. Homebrew's Python expects a newer libexpat than the one macOS ships.
 
 **Fix:** `scripts/setup_local.sh` now removes the Homebrew build and installs the official AWS CLI package, which bundles its own Python and does not depend on system libraries.
+
+## 2026-11-14: First local run and model selection
+
+**Done**
+
+- `aws login` works with this account; the CLI assumes `AccountFullAccessRole` with short-lived credentials.
+- The agent starts locally under `agentcore dev` with all tools loaded (`scripts/try_local.sh`).
+
+**Problem:** the template's default model, Claude Sonnet 5.5, returned `AccessDeniedException: not available for this account`, even after the Marketplace subscription was created automatically.
+
+**Investigation:** `scripts/probe_models.sh` sends a five-token request to every inference profile and on-demand text model in us-east-2. 47 of 140 IDs responded. Among Anthropic models, the global profiles for Claude Sonnet 4.6, Opus 4.6, Opus 4.5 and Haiku 4.5 work; the 4.7+ and 5.x models are not available to this account, and the `us.` regional profiles ask for a use-case form. Amazon Nova (Micro, Lite, Pro, 2 Lite) also works.
+
+**Decision:** default to `global.anthropic.claude-sonnet-4-6`. It is the most capable model the account can call with reliable tool use. The model ID is read from `BEDROCK_MODEL_ID`, so Haiku 4.5 or Nova can be compared later in evaluations on cost and accuracy without code changes.
+
+**Lesson worth keeping:** verify model entitlement per account and region before designing around a model. Availability differs by account plan and by inference profile scope (global vs regional).

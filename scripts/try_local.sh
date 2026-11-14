@@ -9,6 +9,12 @@ export AWS_DEFAULT_REGION="us-east-2"
 LOG="local_run.log"
 : > "$LOG"
 
+# Credentials from `aws login` are short-lived; sign in again if they expired.
+if ! aws sts get-caller-identity >/dev/null 2>&1; then
+  echo "AWS session expired; signing in again (a browser window will open)..."
+  aws login --region "$AWS_REGION"
+fi
+
 echo "Starting local dev server (first run installs dependencies; this can take a few minutes)..."
 agentcore dev --no-traces >>"$LOG" 2>&1 &
 DEV_PID=$!
