@@ -158,3 +158,17 @@ In both runs the agent called `adjudicate_claim` first and then the three lookup
 **Cost expectation (from published rates, to be confirmed against the bill)**
 
 Runtime bills only active CPU and memory per second; Gateway is priced per thousand invocations; Lambda at this volume is within its free allowance. Nothing in the stack bills by the hour while idle. The dominant cost is model tokens.
+
+## 2026-11-14: First deploy attempt failed on asset upload
+
+**What worked:** account verification, synthesis, CDK bootstrap of us-east-2, upload of the Lambda package and the template.
+
+**Problem:** the 44 MB agent package failed to upload. The deploy tool sends it to S3 as four parallel 5 MB parts; all four hit `RequestTimeout: Your socket connection to the server was not read from or written to within the timeout period` after seven retries. Nothing was created in CloudFormation, so there was nothing to roll back.
+
+**Cause:** S3 closes a connection that receives no data for about 20 seconds. Four parallel streams on a slow or unstable uplink starve each other.
+
+**Fix:** `scripts/deploy.sh` now runs `agentcore build`, reads the asset manifest, and uploads each package with a single-stream `put-object` (no read timeout) before deploying. Asset keys are content hashes and builds are deterministic on one machine (verified by building twice), so the deploy finds the object already present and skips its own upload.
+
+**Also fixed:** the stack is named `AgentCore-ClaimsCopilot-default` (the CLI appends the target name); `scripts/teardown.sh` updated.
+
+**Follow-up worth doing:** most of the 44 MB is dependencies. A container build, where the image is built in the cloud, would remove the large upload from the developer's machine entirely.
