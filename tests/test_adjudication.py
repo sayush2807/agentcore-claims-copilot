@@ -7,7 +7,7 @@ import pytest
 from domain import adjudication
 from legacy_systems import claims_core, policy_admin
 
-RAW_CLAIMS = json.loads((Path(__file__).parent.parent / "data" / "claims.json").read_text())
+RAW_CLAIMS = json.loads((Path(__file__).parent.parent / "services" / "legacy_api" / "data" / "claims.json").read_text())
 SCENARIOS = {c["scenario"]: c["claim_id"] for c in RAW_CLAIMS
              if c["scenario"] not in ("background", "history")}
 

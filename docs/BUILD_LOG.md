@@ -135,3 +135,26 @@ In both runs the agent called `adjudicate_claim` first and then the three lookup
 - `docs/SUCCESS_CRITERIA.md`: proposed measurable criteria (awaiting confirmation).
 
 **Found:** the agent's tools import `legacy_systems` from the repository root. AgentCore Runtime packages only `app/agent`, so a deploy in the current state would fail on import. The first deploy therefore includes the Gateway: legacy systems as Lambda functions, reached by the agent as remote tools.
+
+## 2026-11-14: Gateway and Lambda for the legacy systems
+
+**Done**
+
+- Moved the mock systems and data to `services/legacy_api/` and added `handler.py`, the Lambda entry point. See ADR 0003.
+- Declared a Gateway (`LegacySystems`, MCP, `AWS_IAM` authorizer) with a `lambda` target and three tool definitions, using `agentcore add gateway` and `agentcore add gateway-target`.
+- Added `app/agent/clients/legacy.py`: one interface, a Gateway implementation (SigV4-signed JSON-RPC) and a local implementation. Tools now use it.
+- Tests: 37 passing. New tests cover the Lambda handler, error mapping, and that the Gateway client and local client return identical records (JSON and event-stream responses).
+- `agentcore build` synthesises cleanly. The CloudFormation template contains one Runtime, Memory, Gateway, Gateway target, Lambda function, log group and four IAM roles. The runtime receives `AGENTCORE_GATEWAY_LEGACYSYSTEMS_URL` automatically. The Lambda package is 8 KB and includes the data files; the agent package is 43 MB.
+- `scripts/deploy.sh` (tests, deploy, status, one invocation) and `scripts/teardown.sh` (delete the stack).
+
+**How the schema was learned:** the CLI help lists target types but not their shape. The exact `lambda` target schema (tool definitions plus a `compute` block) and the requirement for a `pyproject.toml` in the Lambda folder came from reading the published `@aws/agentcore-cdk` package. The CLI's default `protocolType` for a new gateway was `None`; it was changed to `MCP`.
+
+**Not yet verified (needs a real deploy)**
+
+- That the Gateway passes the tool name to Lambda in `context.client_context.custom["bedrockAgentCoreToolName"]` as `<target>___<tool>`. The handler is written to that contract.
+- That the Gateway accepts `tools/list` and `tools/call` without a prior MCP `initialize` handshake.
+- That the runtime role created by the CLI can invoke Claude Sonnet 4.6 through the global inference profile.
+
+**Cost expectation (from published rates, to be confirmed against the bill)**
+
+Runtime bills only active CPU and memory per second; Gateway is priced per thousand invocations; Lambda at this volume is within its free allowance. Nothing in the stack bills by the hour while idle. The dominant cost is model tokens.

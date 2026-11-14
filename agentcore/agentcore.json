@@ -5,8 +5,8 @@
   "runtimes": [
     {
       "name": "agent",
-      "build": "CodeZip",
       "modelProvider": "Bedrock",
+      "build": "CodeZip",
       "entrypoint": "main.py",
       "codeLocation": "app/agent",
       "runtimeVersion": "PYTHON_3_14",
@@ -35,5 +35,89 @@
         }
       ]
     }
-  ]
+  ],
+  "knowledgeBases": [],
+  "credentials": [],
+  "evaluators": [],
+  "onlineEvalConfigs": [],
+  "agentCoreGateways": [
+    {
+      "name": "LegacySystems",
+      "protocolType": "MCP",
+      "description": "Front door to the insurer's policy administration and core claims systems",
+      "targets": [
+        {
+          "name": "legacy-api",
+          "targetType": "lambda",
+          "toolDefinitions": [
+            {
+              "name": "get_claim",
+              "description": "Look up a claim in the core claims system by its ID, for example CLM-9000.",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "claim_id": {
+                    "type": "string",
+                    "description": "Claim ID, for example CLM-9000"
+                  }
+                },
+                "required": [
+                  "claim_id"
+                ]
+              }
+            },
+            {
+              "name": "get_policy",
+              "description": "Look up a policy in the policy administration system by its ID, for example POL-1000. Returns status, policy period, coverages with limits and deductibles, and exclusions.",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "policy_id": {
+                    "type": "string",
+                    "description": "Policy ID, for example POL-1000"
+                  }
+                },
+                "required": [
+                  "policy_id"
+                ]
+              }
+            },
+            {
+              "name": "list_claims_for_policy",
+              "description": "List every claim filed against a policy, oldest first.",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "policy_id": {
+                    "type": "string",
+                    "description": "Policy ID, for example POL-1000"
+                  }
+                },
+                "required": [
+                  "policy_id"
+                ]
+              }
+            }
+          ],
+          "compute": {
+            "host": "Lambda",
+            "implementation": {
+              "language": "Python",
+              "path": "services/legacy_api",
+              "handler": "handler.lambda_handler"
+            },
+            "pythonVersion": "PYTHON_3_13",
+            "timeout": 15,
+            "memorySize": 256
+          }
+        }
+      ],
+      "authorizerType": "AWS_IAM",
+      "enableSemanticSearch": false,
+      "exceptionLevel": "NONE"
+    }
+  ],
+  "policyEngines": [],
+  "configBundles": [],
+  "harnesses": []
 }

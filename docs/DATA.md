@@ -4,7 +4,7 @@ All data in this repository is synthetic. No real policyholder, policy or claim 
 
 ## Generator
 
-`data/generate.py` writes `data/policies.json` and `data/claims.json`. Run it with `python data/generate.py`.
+`services/legacy_api/data/generate.py` writes `policies.json` and `claims.json` next to itself. Run it with `python services/legacy_api/data/generate.py`.
 
 Two properties make the data usable for tests and evaluation:
 
@@ -42,7 +42,7 @@ Holder names are random pairings from short lists of first and last names.
 
 ## Preventing answer leakage
 
-Each raw claim record carries a `scenario` label (for example `fraud_indicators`) so tests can find it. If the agent could read that label it would be told the answer. The claims service (`legacy_systems/claims_core.py`) strips the field from everything it returns, and a test asserts it never appears. Evaluation data must be kept away from the system being evaluated; this is the small-scale version of that rule.
+Each raw claim record carries a `scenario` label (for example `fraud_indicators`) so tests can find it. If the agent could read that label it would be told the answer. The claims service (`services/legacy_api/legacy_systems/claims_core.py`) strips the field from everything it returns, and a test asserts it never appears. Evaluation data must be kept away from the system being evaluated; this is the small-scale version of that rule.
 
 ## Known limitations
 
