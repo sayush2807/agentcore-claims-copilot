@@ -97,6 +97,27 @@
                   "policy_id"
                 ]
               }
+            },
+            {
+              "name": "approve_payout",
+              "description": "Record a human approver's decision to pay a claim. Not available to the agent; called by the adjuster application. Payouts above the adjuster limit are rejected by Gateway policy.",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "claim_id": {
+                    "type": "string",
+                    "description": "Claim ID, for example CLM-9000"
+                  },
+                  "amount": {
+                    "type": "integer",
+                    "description": "Approved payout in whole currency units"
+                  }
+                },
+                "required": [
+                  "claim_id",
+                  "amount"
+                ]
+              }
             }
           ],
           "compute": {
@@ -114,10 +135,20 @@
       ],
       "authorizerType": "AWS_IAM",
       "enableSemanticSearch": false,
-      "exceptionLevel": "NONE"
+      "exceptionLevel": "NONE",
+      "policyEngineConfiguration": {
+        "policyEngineName": "ClaimsGuardrails",
+        "mode": "ENFORCE"
+      }
     }
   ],
-  "policyEngines": [],
+  "policyEngines": [
+    {
+      "name": "ClaimsGuardrails",
+      "description": "Hard limits on claims actions, enforced at the Gateway outside the agent",
+      "policies": []
+    }
+  ],
   "configBundles": [],
   "harnesses": []
 }

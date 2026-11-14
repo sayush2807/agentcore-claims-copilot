@@ -65,3 +65,18 @@ def test_gateway_client_maps_not_found_and_errors():
         gateway._call("no_such_tool", {})
     with pytest.raises(GatewayError):
         GatewayLegacyClient._parse("application/json", json.dumps({"error": {"code": -32000, "message": "denied"}}))
+
+
+def test_handler_records_payout_approval_without_checking_the_limit():
+    # The limit is enforced by Gateway policy, not by this function (see policies/).
+    ok = handler.lambda_handler({"claim_id": "CLM-9000", "amount": 750}, ctx("approve_payout"))
+    assert ok["status"] == "APPROVAL_RECORDED" and ok["approved_amount"] == 750
+    big = handler.lambda_handler({"claim_id": "CLM-9001", "amount": 83500}, ctx("approve_payout"))
+    assert big["status"] == "APPROVAL_RECORDED"
+
+
+def test_handler_rejects_bad_payout_input():
+    assert handler.lambda_handler({"claim_id": "CLM-9000"}, ctx("approve_payout"))["error"] == "INVALID_INPUT"
+    assert handler.lambda_handler({"claim_id": "CLM-9000", "amount": -5}, ctx("approve_payout"))["error"] == "INVALID_INPUT"
+    assert handler.lambda_handler({"claim_id": "CLM-9000", "amount": "750"}, ctx("approve_payout"))["error"] == "INVALID_INPUT"
+    assert handler.lambda_handler({"claim_id": "CLM-0", "amount": 10}, ctx("approve_payout"))["error"] == "CLAIM_NOT_FOUND"

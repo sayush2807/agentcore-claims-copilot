@@ -25,6 +25,25 @@ def _require(event: dict, field: str) -> str:
     return value
 
 
+def _approve_payout(event: dict) -> dict:
+    """Record an approver's decision to pay. The mock does not persist anything.
+
+    The approval limit is deliberately NOT checked here. It is enforced by
+    AgentCore Policy at the Gateway, before this function is ever invoked, so
+    the control cannot be bypassed by changing agent or application code.
+    """
+    claim = claims_core.get_claim(_require(event, "claim_id"))
+    amount = event.get("amount")
+    if isinstance(amount, bool) or not isinstance(amount, int) or amount < 0:
+        raise ValueError("'amount' is required and must be a non-negative whole number")
+    return {
+        "status": "APPROVAL_RECORDED",
+        "claim_id": claim["claim_id"],
+        "approved_amount": amount,
+        "note": "Mock system: the approval is acknowledged but not stored.",
+    }
+
+
 def lambda_handler(event, context):
     tool = _tool_name(context)
     event = event or {}
@@ -35,6 +54,8 @@ def lambda_handler(event, context):
             return policy_admin.get_policy(_require(event, "policy_id"))
         if tool == "list_claims_for_policy":
             return {"claims": claims_core.list_claims_for_policy(_require(event, "policy_id"))}
+        if tool == "approve_payout":
+            return _approve_payout(event)
         return {"error": "UNKNOWN_TOOL", "message": f"Unknown tool '{tool}'."}
     except claims_core.ClaimNotFound as exc:
         return {"error": "CLAIM_NOT_FOUND", "message": f"No claim found with ID {exc}."}
