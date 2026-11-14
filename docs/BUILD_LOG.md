@@ -125,3 +125,13 @@ In both runs the agent called `adjudicate_claim` first and then the three lookup
 2. On the referred claim it called 29,500 the "recommended payout ... on hold", while the tool returns a recommended payout of 0 for a referral.
 
 **Fix:** two explicit prompt rules added. These two cases become the first entries in the evaluation set, because they show the kind of error that deterministic tools alone do not prevent: the numbers are right, the framing drifts.
+
+## 2026-11-14: Documentation and a deployment gap found on review
+
+**Done**
+
+- `docs/INTERVIEW_NOTES.md`: issues, decisions, trade-offs, limitations and bias.
+- `docs/DATA.md`: how the synthetic data is generated and protected from leakage.
+- `docs/SUCCESS_CRITERIA.md`: proposed measurable criteria (awaiting confirmation).
+
+**Found:** the agent's tools import `legacy_systems` from the repository root. AgentCore Runtime packages only `app/agent`, so a deploy in the current state would fail on import. The first deploy therefore includes the Gateway: legacy systems as Lambda functions, reached by the agent as remote tools.
