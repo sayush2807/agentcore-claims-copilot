@@ -67,3 +67,16 @@ A chronological record of what was done, why, and what alternatives were conside
 ```
 uv run --no-project --with pytest python -m pytest tests -q
 ```
+
+## 2026-11-14: Local credentials approach
+
+**Decision:** use `aws login` (AWS CLI 2.32+) for local credentials instead of creating an IAM user with access keys. It reuses the console sign-in and issues short-lived, auto-rotated credentials, so no long-lived secret is stored on the laptop. This also avoids IAM Identity Center, which would convert the free-plan account to paid.
+
+**Done**
+
+- `scripts/setup_local.sh`: checks for AWS CLI, Node, uv and the AgentCore CLI, runs `aws login` for us-east-2 and prints the signed-in identity.
+- First push to GitHub completed; `main` on GitHub matches local.
+
+**Open**
+
+- Confirm `aws login` works with this account's sign-in method, then run the agent locally with `agentcore dev`.
