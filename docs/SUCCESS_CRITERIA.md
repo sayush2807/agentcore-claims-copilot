@@ -1,6 +1,6 @@
 # Success criteria
 
-**Status: proposed, awaiting confirmation.** Targets marked "baseline first" have no measurement yet; a number will be set after the first evaluation run rather than invented now.
+**Status: accepted on 2026-11-14.** Targets marked "baseline first" have no measurement yet; a number will be set after the first evaluation run rather than invented now.
 
 ## 1. Project goal
 
