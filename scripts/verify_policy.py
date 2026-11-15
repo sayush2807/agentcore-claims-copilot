@@ -34,7 +34,10 @@ def outputs(stack: str) -> dict:
 
 
 def gateway_url(all_outputs: dict, name: str) -> str:
-    return next(v for k, v in all_outputs.items() if "Gateway" in k and name in k and k.endswith("Url"))
+    matches = [v for k, v in all_outputs.items() if "Gateway" in k and name in k and "Url" in k and "Target" not in k]
+    if not matches:
+        raise SystemExit(f"No URL output found for gateway {name}. Outputs: {sorted(all_outputs)}")
+    return matches[0]
 
 
 class BearerGateway(GatewayLegacyClient):
