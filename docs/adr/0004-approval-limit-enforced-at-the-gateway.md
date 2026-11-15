@@ -1,6 +1,6 @@
 # ADR 0004: The approval limit is enforced by Gateway policy, not by prompt or application code
 
-**Status:** Accepted (2026-11-14)
+**Status:** Accepted (2026-11-14). The single-Gateway layout and the two policies described here were superseded the next day by ADR 0005, which adds signed-in roles; the principle is unchanged.
 
 ## Context
 

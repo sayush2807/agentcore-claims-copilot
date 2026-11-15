@@ -235,3 +235,20 @@ Runtime bills only active CPU and memory per second; Gateway is priced per thous
 **Not done:** a live evaluation run. It needs model access.
 
 **Prompt changes are unverified.** The summary line and the data-not-instruction rule have not been exercised against a model.
+
+## 2026-11-15: Sign-in and role-based approval limits
+
+**Done** (see ADR 0005)
+
+- `infra/identity.yaml`: Cognito user pool, an app client, and two demo users whose role is a claim in the signed ID token.
+- Second Gateway, `AdjusterActions`, with a JWT authorizer and one tool, `approve_payout`. The agent's Gateway, `LegacySystems`, is now read-only.
+- Three Cedar policies: lookups; adjuster up to 10,000; supervisor up to 250,000. Policy files now name their Gateway with `{{GATEWAY_ARN:<name>}}`.
+- `scripts/configure_identity.sh` deploys the identity stack and writes its outputs into the working copy of `agentcore.json`; both deploy scripts call it.
+- The agent's client now selects its Gateway by name rather than taking the first Gateway URL in the environment, since there are now two.
+- `scripts/verify_policy.py` rewritten: signs in as each demo user with a throwaway password and exercises both Gateways.
+
+**Verified in AWS:** identity stack and main stack deployed from CloudShell. 12 of 12 checks passed, including HTTP 401 for a missing token and for an unsigned token claiming to be a supervisor. Cedar validation against the Gateway schema accepted the role tag (`custom:role`) on the first attempt.
+
+**One defect on the way:** the verification script looked for stack output keys ending in `Url`; the real keys have a hash suffix. Fixed by matching on content, with an error that lists the available keys.
+
+**Documentation completed:** README rewritten with status table and run instructions; `docs/ARCHITECTURE.md` added; ADR 0005; success criteria, interview notes and policy README updated.

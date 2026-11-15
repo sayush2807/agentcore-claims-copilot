@@ -12,28 +12,35 @@ Most agent demos are a model with a few tools. The hard parts of putting an agen
 
 1. **Rules decide, the model explains.** Coverage, payout, fraud indicators and approval routing are unit-tested Python. The model retrieves, orchestrates and explains. ([ADR 0001](docs/adr/0001-deterministic-adjudication.md))
 2. **Legacy systems sit behind a Gateway.** The agent holds no data and reaches the insurer's systems through AgentCore Gateway with IAM-signed requests. ([ADR 0003](docs/adr/0003-gateway-in-front-of-legacy-systems.md))
-3. **Hard limits live outside the agent.** A Cedar policy at the Gateway denies payout approvals above 10,000, whatever the model or the calling application says. ([ADR 0004](docs/adr/0004-approval-limit-enforced-at-the-gateway.md))
+3. **Hard limits live outside the agent.** Cedar policies at the Gateway decide who may approve how much, from the approver's signed-in role: adjusters up to 10,000, supervisors up to 250,000. The agent and people use separate Gateways, so the agent has no path to an approval. ([ADR 0004](docs/adr/0004-approval-limit-enforced-at-the-gateway.md), [ADR 0005](docs/adr/0005-separate-gateways-for-the-agent-and-for-people.md))
 4. **Faithfulness is measured.** An evaluation set checks that each answer matches the rules, invents nothing and never claims a decision is final. ([evals/](evals/README.md))
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-    adjuster["Adjuster"] --> runtime
+    person["Adjuster or supervisor"]
+    person -- "ask" --> runtime
+    person -- "sign in" --> cognito["Cognito"]
+    person -- "approve, with token" --> actions
+
     subgraph agentcore["Amazon Bedrock AgentCore"]
         runtime["Runtime: claims agent"]
         memory["Memory"]
-        gateway["Gateway (MCP, IAM auth)"]
-        policy["Policy engine (Cedar, default deny)"]
+        legacy["Gateway for the agent<br/>IAM auth, read-only"]
+        actions["Gateway for people<br/>JWT auth, approvals"]
+        policy["Policy engine<br/>Cedar, default deny"]
     end
     model["Amazon Bedrock model"]
     lambda["Lambda: mock policy and claims systems"]
 
     runtime <--> model
     runtime <--> memory
-    runtime -- "tool calls" --> gateway
-    gateway -- "authorise" --> policy
-    gateway --> lambda
+    runtime -- "lookups" --> legacy
+    legacy --> policy
+    actions --> policy
+    legacy --> lambda
+    actions --> lambda
 ```
 
 Full walkthrough: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
@@ -47,7 +54,7 @@ Full walkthrough: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 | Agent, run locally against Claude Sonnet 4.6 | Worked on two claims | [docs/BUILD_LOG.md](docs/BUILD_LOG.md), 14 Nov |
 | Deployed to AgentCore Runtime, Memory, Gateway, Lambda | Deployed in us-east-2 | Build log, 14 Nov |
 | Gateway to Lambda path | Verified live | Gateway returned real records over signed MCP calls |
-| Policy at the Gateway | Verified live, 6 of 6 checks | `scripts/verify_policy.py`; 10,000 allowed, 10,001 denied |
+| Sign-in and role-based policy at the Gateways | Verified live, 12 of 12 checks | `scripts/verify_policy.py`: adjuster 10,000 allowed and 10,001 denied; supervisor 250,000 allowed and 250,001 denied; missing and unsigned tokens rejected; the agent's Gateway has no approval tool |
 | Evaluation harness | Built; catches a real defect from the first run | `evals/`, replay of saved transcripts |
 | Live evaluation run | Blocked | The AWS account's Bedrock access was restricted at account level on 14 Nov; a support case is open |
 | Deployed agent answering end to end | Blocked by the same restriction | [docs/INTERVIEW_NOTES.md](docs/INTERVIEW_NOTES.md), 1.9 |
@@ -63,7 +70,8 @@ app/agent/              The agent: prompt, tools, rules, Gateway client
   clients/              LegacyClient: Gateway and local implementations
 services/legacy_api/    Mock policy and claims systems, packaged as a Lambda function
   data/                 Synthetic data and its generator
-policies/               Cedar policies enforced at the Gateway
+policies/               Cedar policies enforced at the Gateways
+infra/                  Identity stack (Cognito)
 agentcore/              AgentCore project definition and CDK app
 evals/                  Evaluation cases, scorers and runner
 tests/                  Unit tests
@@ -106,7 +114,7 @@ curl -fsSL https://raw.githubusercontent.com/sayush2807/agentcore-claims-copilot
 
 or from a machine with a reliable upload connection: `bash scripts/deploy.sh`.
 
-**Verify the Gateway policy** (after deploying, no model needed)
+**Verify sign-in and Gateway policy** (after deploying, from CloudShell, no model needed)
 
 ```
 python3 scripts/verify_policy.py

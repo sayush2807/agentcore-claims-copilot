@@ -70,13 +70,21 @@ Everything here happened on this project. Each entry is written so it can be tol
 - **What was verified without the model:** from inside AWS, the Gateway listed its three tools, returned claim CLM-9001 from the Lambda function, and returned four history records for POL-1007, all through SigV4-signed MCP calls. Three assumptions that could only be tested by deploying turned out correct: the tool-name contract between Gateway and Lambda, calling the Gateway without an MCP handshake, and IAM-based authorisation.
 - **Why it matters for delivery:** a new or newly vended account is a risk item in itself. Confirm model invocation from the target account early, do it gently, and have the support path and an escalation contact ready before the demo depends on it. Also: when one layer is blocked, test the layers beneath it separately so the block does not hide other defects.
 
+### 1.10 A value needed at configuration time only exists after deployment
+
+- **Situation:** the JWT authorizer on a Gateway needs the identity provider's discovery URL and client ID when the Gateway is defined. Those are generated when the user pool is created, so they could not be written into `agentcore.json` in advance. The only way to see them was on a terminal screen.
+- **What we did:** split identity into its own small stack, deployed first. A script reads its outputs and writes them into the working copy of the project file just before the main deploy. The repository keeps obviously fake placeholders.
+- **Why not just paste the values in:** transcribing identifiers by eye from a terminal is how a lowercase L becomes a one, and the failure would have been a Gateway that silently rejects every token. Reading them programmatically removes that class of error and keeps environment-specific identifiers out of a public repository.
+- **Trade-off:** the deploy is now two steps with an ordering dependency, and the project file in the repository is not deployable as-is.
+- **Why it matters for delivery:** dependencies between stacks are normal in real environments (network, identity and application are usually owned by different teams). Deciding what is an input, what is an output, and who passes it across is most of the work.
+
 ## 2. Decisions and their trade-offs
 
 | Decision | Why | What it costs |
 |---|---|---|
 | Rules, not the model, decide coverage and money (ADR 0001) | Reproducible, auditable, unit-testable; regulators and customers can be shown exactly why a figure was produced | The agent cannot handle rule types nobody coded. Intended: those go to a human |
 | The agent recommends; a human approves | Claims decisions carry legal and financial weight | Slower than straight-through processing; no full automation story |
-| Approval limit enforced by Cedar policy at the Gateway, default deny (ADR 0004). Verified live: 10,001 is denied, 10,000 is allowed | A prompt is guidance, not a control. A hard limit must hold even if the model is manipulated or a different client calls the Gateway | Every new tool needs an explicit permit before it works; supervisors cannot approve large payouts until user identity is integrated, so the system fails closed |
+| Approval limits enforced by Cedar policy at the Gateway, default deny, with the approver's role taken from a signed token; the agent and people use separate Gateways (ADR 0004, 0005). Verified live, 12 of 12 | A prompt is guidance, not a control. Separating recommend from approve by endpoint, credential and identity means a manipulated agent has no path to an approval | Two Gateways and a two-step deploy; every new tool needs an explicit permit; lookups are authorised per system, not yet per user |
 | One `adjudicate_claim` tool instead of separate coverage, payout and fraud tools | Fewer chances for the model to combine partial results incorrectly | Less flexible; the model cannot run a single check in isolation |
 | Claude Sonnet 4.6 as the default model | Most capable model the account can call, with reliable tool use | Higher cost per call than Haiku 4.5 or Nova. To be measured in evaluation rather than assumed |
 | Synthetic data only | No privacy, licensing or confidentiality risk; fully reproducible | Not representative of real claims (see section 3) |
