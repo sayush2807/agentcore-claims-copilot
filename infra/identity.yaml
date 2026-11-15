@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Claims Copilot - identity for human approvers. A Cognito user pool with two demo
+  users whose role is carried in the ID token as the custom:role claim. Deployed
+  separately from the AgentCore stack because the Gateway's JWT authorizer needs
+  the pool's discovery URL and client ID at configuration time.
+
+Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: claims-copilot-approvers
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true      # no self sign-up
+      Schema:
+        - Name: role
+          AttributeDataType: String
+          Mutable: true
+          StringAttributeConstraints: { MinLength: "1", MaxLength: "32" }
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 16
+          RequireLowercase: true
+          RequireUppercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+
+  AdjusterAppClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientName: adjuster-app
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      IdTokenValidity: 60
+      AccessTokenValidity: 60
+      TokenValidityUnits: { IdToken: minutes, AccessToken: minutes }
+
+  DemoAdjuster:
+    Type: AWS::Cognito::UserPoolUser
+    Properties:
+      UserPoolId: !Ref UserPool
+      Username: demo-adjuster
+      MessageAction: SUPPRESS
+      UserAttributes:
+        - { Name: "custom:role", Value: adjuster }
+
+  DemoSupervisor:
+    Type: AWS::Cognito::UserPoolUser
+    Properties:
+      UserPoolId: !Ref UserPool
+      Username: demo-supervisor
+      MessageAction: SUPPRESS
+      UserAttributes:
+        - { Name: "custom:role", Value: supervisor }
+
+Outputs:
+  UserPoolId:
+    Value: !Ref UserPool
+  ClientId:
+    Value: !Ref AdjusterAppClient
+  DiscoveryUrl:
+    Value: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}/.well-known/openid-configuration"
