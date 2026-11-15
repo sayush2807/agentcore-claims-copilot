@@ -39,7 +39,7 @@ Q1 and Q2 are set at 100% deliberately: the agent is relaying a deterministic re
 | O2 | Tears down completely with one command | Yes |
 | O3 | Response time per claim review | Baseline first |
 | O4 | Model cost per claim review, and how it changes with a cheaper model | Baseline first, then compare at least two models |
-| O5 | Unit tests and evaluation gate run in CI on every push | Yes |
+| O5 | Unit tests and evaluation gate run in CI on every push | Yes. **Partly met 2026-11-15:** unit tests and scorer checks run in GitHub Actions; the live evaluation gate needs model access and deploy credentials |
 
 ## 5. Explicitly out of scope
 

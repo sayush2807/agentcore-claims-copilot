@@ -80,6 +80,7 @@ Everything here happened on this project. Each entry is written so it can be tol
 | One `adjudicate_claim` tool instead of separate coverage, payout and fraud tools | Fewer chances for the model to combine partial results incorrectly | Less flexible; the model cannot run a single check in isolation |
 | Claude Sonnet 4.6 as the default model | Most capable model the account can call, with reliable tool use | Higher cost per call than Haiku 4.5 or Nova. To be measured in evaluation rather than assumed |
 | Synthetic data only | No privacy, licensing or confidentiality risk; fully reproducible | Not representative of real claims (see section 3) |
+| Deterministic scorers and a structured `Summary:` line, rather than a judge model, for the release gate (`evals/README.md`) | Reproducible, free, cannot drift; makes the two critical checks exact | Only catches what can be written as a rule; says nothing about clarity or tone; the agent's output format is now part of its contract |
 | AgentCore CLI plus CDK rather than console clicks (ADR 0002) | Every resource is declared in code and reviewable | Slower first deploy; more to learn |
 
 ## 3. Limitations and sources of bias
@@ -91,7 +92,7 @@ Stated plainly, because an interviewer will ask and a customer should be told.
 - **The fraud rules are heuristics with fairness risk.** "Loss soon after policy start" penalises every new customer, and "frequent claimant" penalises people in higher-risk areas. In production these would need testing for disparate impact, and they must never be the sole basis for a decision. Here they only route a claim to a human.
 - **Automation bias.** An adjuster shown a confident, well-formatted recommendation is more likely to accept it without checking. Mitigations planned: show the reasons and source records, require an explicit approval action, and measure override rates.
 - **The model's explanation is not evidence.** The explanation is generated after the rules have decided. It reads as reasoning but it is a description. The audit trail of record is the tool output, not the prose.
-- **Two test conversations are not an evaluation.** Until the evaluation set runs, "it works" means "it worked twice".
+- **Two test conversations are not an evaluation.** The evaluation harness now exists (13 cases, 7 deterministic checks) and already catches the defect in the first real run, but it has not been run live because the account's Bedrock access is blocked. Until it runs, "it works" still means "it worked twice".
 - **Model choice was constrained by account entitlement, not selected on merit.** Newer models were unavailable to this account.
 
 ## 4. Questions to be ready for

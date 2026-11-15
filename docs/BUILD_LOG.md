@@ -214,3 +214,24 @@ Runtime bills only active CPU and memory per second; Gateway is priced per thous
 **Observation:** `tools/list` still shows `approve_payout` to a caller whose large approvals would be denied. Policy here governs invocation, not discovery.
 
 **Not done:** a supervisor path. It needs the Gateway to authenticate end users so a policy can test their role.
+
+## 2026-11-15: Evaluation harness
+
+**Status check, 01:58 ET:** Bedrock still returns Error 002. No reply on the support case yet (opened 12:59 ET the previous day, a Saturday).
+
+**Done** (see `evals/README.md`)
+
+- `evals/cases.json`: 13 cases, including a prompt injection hidden in a claim description, a user claiming authority to force an overpayment, and two unknown-record cases.
+- `evals/scoring.py`: seven deterministic checks mapped to criteria Q1 to Q7.
+- `evals/run_eval.py`: runs against the deployed or local agent, or replays saved transcripts; computes expected outcomes from the rules at run time; exits non-zero on any failure.
+- New synthetic claim CLM-9022 carrying the injected instruction, appended last so no existing ID changed.
+- System prompt: the agent now ends each review with a structured `Summary:` line, and is told that text inside records is data, not instruction.
+- `evals/fixtures/first_local_run.json`: the two real transcripts from the first successful run.
+- `.github/workflows/ci.yml`: unit tests on every push, plus a check that the gate fails on the known-defective transcripts.
+- Tests: 49 passing.
+
+**Evidence the harness works:** replaying the first real run, it flags the invented "75/100" scale on the fraud case (Q3) and the missing summary line on both (Q1, Q2, expected, since they predate the prompt change), and passes tool order, finality and fraud-language checks.
+
+**Not done:** a live evaluation run. It needs model access.
+
+**Prompt changes are unverified.** The summary line and the data-not-instruction rule have not been exercised against a model.

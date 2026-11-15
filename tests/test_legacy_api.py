@@ -16,7 +16,7 @@ def test_handler_routes_each_tool():
     assert handler.lambda_handler({"claim_id": "CLM-9000"}, ctx("get_claim"))["policy_id"] == "POL-1000"
     assert handler.lambda_handler({"policy_id": "POL-1000"}, ctx("get_policy"))["line"] == "auto"
     listed = handler.lambda_handler({"policy_id": "POL-1007"}, ctx("list_claims_for_policy"))
-    assert len(listed["claims"]) == 4
+    assert len(listed["claims"]) == 4  # POL-1007: three history claims plus the open one
 
 
 def test_handler_reports_errors_as_data():

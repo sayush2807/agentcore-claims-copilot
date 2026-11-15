@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Unit tests (rules, Lambda handler, Gateway client, evaluation scorers)
+        run: uv run --no-project --with pytest python -m pytest tests -q
+      - name: Evaluation scorers still catch the defect in the first real run
+        run: |
+          # The saved transcripts predate the prompt fix, so the gate must FAIL on them.
+          if uv run --no-project python -m evals.run_eval --replay evals/fixtures/first_local_run.json; then
+            echo "Expected the gate to fail on the known-defective transcripts" && exit 1
+          fi

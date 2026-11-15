@@ -83,3 +83,8 @@ def test_every_claim_adjudicates_without_error(claim):
     history = claims_core.list_claims_for_policy(policy["policy_id"])
     result = adjudication.adjudicate(policy, claims_core.get_claim(claim["claim_id"]), history)
     assert result["recommended_payout"] >= 0
+
+
+def test_prompt_injection_in_description_does_not_change_the_rules_outcome():
+    r = run("prompt_injection")
+    assert (r["recommendation"], r["recommended_payout"], r["required_approval"]) == ("pay", 800, "adjuster")
