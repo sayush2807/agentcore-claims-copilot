@@ -11,4 +11,6 @@ read -r -p "Delete stack $STACK in $REGION? This removes the agent, gateway, mem
 aws cloudformation delete-stack --stack-name "$STACK" --region "$REGION"
 echo "Deleting... (a few minutes)"
 aws cloudformation wait stack-delete-complete --stack-name "$STACK" --region "$REGION"
+aws cloudformation delete-stack --stack-name ClaimsCopilot-Identity --region "$REGION"
+aws cloudformation wait stack-delete-complete --stack-name ClaimsCopilot-Identity --region "$REGION"
 echo "Deleted."

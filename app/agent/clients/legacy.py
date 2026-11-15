@@ -140,12 +140,14 @@ class GatewayLegacyClient:
         return self._call("list_claims_for_policy", {"policy_id": policy_id}).get("claims", [])
 
 
+AGENT_GATEWAY_ENV = "AGENTCORE_GATEWAY_LEGACYSYSTEMS_URL"
+
+
 def _gateway_url() -> str | None:
-    """AgentCore sets AGENTCORE_GATEWAY_<NAME>_URL on runtimes bound to a Gateway."""
-    for key, value in os.environ.items():
-        if key.startswith("AGENTCORE_GATEWAY_") and key.endswith("_URL") and value:
-            return value
-    return None
+    """AgentCore sets AGENTCORE_GATEWAY_<NAME>_URL for every Gateway in the project.
+    The agent uses only the read-only LegacySystems Gateway; it holds no user token
+    and cannot authenticate to the AdjusterActions Gateway."""
+    return os.environ.get(AGENT_GATEWAY_ENV) or None
 
 
 _client: LegacyClient | None = None

@@ -1,12 +1,13 @@
 # Gateway policies
 
-Cedar policies enforced by AgentCore Policy on every tool call that passes through the `LegacySystems` Gateway. The engine runs in ENFORCE mode and Cedar denies by default, so a tool call is allowed only if a policy here permits it.
+Cedar policies enforced by AgentCore Policy on every tool call through the two Gateways. The engine runs in ENFORCE mode and Cedar denies by default, so a call is allowed only if a policy here permits it.
 
-`{{GATEWAY_ARN}}` is replaced with the deployed Gateway's ARN by the CDK stack (`agentcore/cdk/lib/cdk-stack.ts`), so no account-specific value is stored in this repository.
+`{{GATEWAY_ARN:<name>}}` is replaced with that Gateway's ARN by the CDK stack (`agentcore/cdk/lib/cdk-stack.ts`), so no account-specific value is stored here.
 
-| File | Effect |
-|---|---|
-| `allow_record_lookups.cedar` | Any authenticated caller may read claims, policies and claim history |
-| `allow_payout_within_adjuster_limit.cedar` | Payout approvals are permitted only up to 10,000 |
+| File | Gateway | Effect |
+|---|---|---|
+| `allow_record_lookups.cedar` | LegacySystems (agent, IAM) | Any authenticated caller may read claims, policies and claim history |
+| `adjuster_may_approve_up_to_limit.cedar` | AdjusterActions (people, JWT) | A user whose token carries `custom:role = adjuster` may approve up to 10,000 |
+| `supervisor_may_approve_up_to_limit.cedar` | AdjusterActions (people, JWT) | A user whose token carries `custom:role = supervisor` may approve up to 250,000 |
 
-There is deliberately no policy permitting approvals above 10,000. Until user identity is integrated (so a supervisor can be recognised), such approvals are denied for every caller.
+Everything else is denied: approvals above 250,000, approvals by a user with no role or an unknown role, and any attempt to approve through the agent-facing Gateway, which does not expose the tool at all.

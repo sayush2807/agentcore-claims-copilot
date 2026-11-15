@@ -28,6 +28,9 @@ if ! uv run --no-project --with pytest python -m pytest tests -q >>"$LOG" 2>&1; 
   say "Tests failed; not deploying. See $LOG"; exit 1
 fi
 
+say "Configuring identity..."
+bash scripts/configure_identity.sh >>"$LOG" 2>&1 || { say "Identity setup failed. See $LOG"; exit 1; }
+
 # The agent package is about 44 MB. The deploy tool uploads it in four parallel
 # parts, which times out on slow or unstable connections. Upload it here as a
 # single stream first; the deploy then finds it in place and skips the upload.

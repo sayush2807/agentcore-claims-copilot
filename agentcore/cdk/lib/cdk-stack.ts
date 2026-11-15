@@ -9,7 +9,6 @@ export interface AgentCoreStackProps extends StackProps {
   application: AgentCoreApplicationProps;
 }
 
-const GATEWAY_NAME = 'LegacySystems';
 const POLICY_ENGINE_NAME = 'ClaimsGuardrails';
 
 /** Locate the repository's policies/ folder from wherever this file is compiled to. */
@@ -36,21 +35,27 @@ export class AgentCoreStack extends Stack {
     this.application = new AgentCoreApplication(this, 'Application', props.application);
 
     // Cedar policies live as reviewable files in policies/. They are created here rather
-    // than in agentcore.json because each statement must name the Gateway's ARN, which is
+    // than in agentcore.json because each statement must name a Gateway's ARN, which is
     // only known at deploy time and should not be committed to a public repository.
-    const gateway = this.application.gateway(GATEWAY_NAME);
     const engine = this.application.policyEngine(POLICY_ENGINE_NAME);
     const policiesDir = findPoliciesDir();
 
     for (const file of fs.readdirSync(policiesDir).filter(f => f.endsWith('.cedar')).sort()) {
       const name = path.basename(file, '.cedar');
+      const referenced = new Set<string>();
       const statement = fs
         .readFileSync(path.join(policiesDir, file), 'utf8')
         .split('\n')
         .filter(line => !line.trim().startsWith('//'))
         .join('\n')
         .trim()
-        .replace(/\{\{GATEWAY_ARN\}\}/g, gateway.gatewayArn);
+        .replace(/\{\{GATEWAY_ARN:([A-Za-z0-9_-]+)\}\}/g, (_match, gatewayName: string) => {
+          referenced.add(gatewayName);
+          return this.application.gateway(gatewayName).gatewayArn;
+        });
+      if (referenced.size === 0) {
+        throw new Error(`${file} must scope its resource with {{GATEWAY_ARN:<gateway name>}}`);
+      }
 
       const policy = new agentcore.CfnPolicy(this, `Policy_${name}`, {
         name,
@@ -60,7 +65,7 @@ export class AgentCoreStack extends Stack {
         enforcementMode: 'ACTIVE',
       });
       // Validation checks the statement against the Gateway's tools, so they must exist first.
-      policy.node.addDependency(gateway);
+      for (const gatewayName of referenced) policy.node.addDependency(this.application.gateway(gatewayName));
     }
   }
 }

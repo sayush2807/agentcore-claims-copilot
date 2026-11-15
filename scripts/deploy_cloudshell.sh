@@ -33,6 +33,10 @@ say "at commit $(git log --oneline -1)"
 say "== Tests =="
 uv run --no-project --with pytest python -m pytest tests -q 2>&1 | tail -1 | tee -a "$LOG"
 
+say "== Identity =="
+git checkout -q -- agentcore/agentcore.json
+bash scripts/configure_identity.sh 2>&1 | tail -1 | tee -a "$LOG"
+
 say "== Deploy (10 minutes or more on the first run) =="
 if ! agentcore deploy --region "$AWS_REGION" 2>&1 | tee -a "$LOG"; then say "DEPLOY FAILED. See $LOG"; exit 1; fi
 

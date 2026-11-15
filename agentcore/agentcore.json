@@ -44,7 +44,7 @@
     {
       "name": "LegacySystems",
       "protocolType": "MCP",
-      "description": "Front door to the insurer's policy administration and core claims systems",
+      "description": "Read-only front door to the insurer's policy administration and core claims systems, for the agent",
       "targets": [
         {
           "name": "legacy-api",
@@ -97,10 +97,41 @@
                   "policy_id"
                 ]
               }
+            }
+          ],
+          "compute": {
+            "host": "Lambda",
+            "implementation": {
+              "language": "Python",
+              "path": "services/legacy_api",
+              "handler": "handler.lambda_handler"
             },
+            "pythonVersion": "PYTHON_3_13",
+            "timeout": 15,
+            "memorySize": 256
+          }
+        }
+      ],
+      "authorizerType": "AWS_IAM",
+      "enableSemanticSearch": false,
+      "exceptionLevel": "NONE",
+      "policyEngineConfiguration": {
+        "policyEngineName": "ClaimsGuardrails",
+        "mode": "ENFORCE"
+      }
+    },
+    {
+      "name": "AdjusterActions",
+      "protocolType": "MCP",
+      "description": "Actions taken by human approvers through the adjuster application. Requires a signed-in user.",
+      "targets": [
+        {
+          "name": "claims-actions",
+          "targetType": "lambda",
+          "toolDefinitions": [
             {
               "name": "approve_payout",
-              "description": "Record a human approver's decision to pay a claim. Not available to the agent; called by the adjuster application. Payouts above the adjuster limit are rejected by Gateway policy.",
+              "description": "Record a human approver's decision to pay a claim. The caller's role and the amount are checked by Gateway policy.",
               "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -133,7 +164,15 @@
           }
         }
       ],
-      "authorizerType": "AWS_IAM",
+      "authorizerType": "CUSTOM_JWT",
+      "authorizerConfiguration": {
+        "customJwtAuthorizer": {
+          "discoveryUrl": "https://cognito-idp.us-east-2.amazonaws.com/POOL_ID_SET_AT_DEPLOY/.well-known/openid-configuration",
+          "allowedAudience": [
+            "CLIENT_ID_SET_AT_DEPLOY"
+          ]
+        }
+      },
       "enableSemanticSearch": false,
       "exceptionLevel": "NONE",
       "policyEngineConfiguration": {
