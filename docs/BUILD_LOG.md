@@ -252,3 +252,11 @@ Runtime bills only active CPU and memory per second; Gateway is priced per thous
 **One defect on the way:** the verification script looked for stack output keys ending in `Url`; the real keys have a hash suffix. Fixed by matching on content, with an error that lists the available keys.
 
 **Documentation completed:** README rewritten with status table and run instructions; `docs/ARCHITECTURE.md` added; ADR 0005; success criteria, interview notes and policy README updated.
+
+## 2026-11-18: Support case follow-up
+
+- Bedrock still returns Error 002 on all models (checked 15 Nov, 16 Nov and 18 Nov 02:49 UTC). No response on the support case in over three days.
+- Noticed that the case acknowledgement lists a different account ID from the project where Bedrock is blocked: the sign-in has a parent settings account, and the case was filed there. The original message did not name the project account.
+- Posted a follow-up on the case naming the affected project account and region, and asking for confirmation that it has been routed to the Bedrock team.
+
+**Lesson:** when an account structure has more than one account ID, state the affected account explicitly in the first message of a support case.
